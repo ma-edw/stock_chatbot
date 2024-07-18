@@ -1,9 +1,30 @@
-from serper_functions import Serper_Search
+from langchain_community.utilities import GoogleSerperAPIWrapper
 from beautiful_soup import extract_article, extract_title, extract_author, extract_date, extract_stocks
 import json
 from pathlib import Path
+import os
 
-def Google_Search(source, keyword, file_path):
+from dotenv import load_dotenv
+load_dotenv()  
+
+def Serper_Search(to_search):
+    search = GoogleSerperAPIWrapper(gl='hk', hl='zh-tw', serper_api_key=os.environ["SERPER_API_KEY"])
+
+    results = search.results(to_search)    
+    num_of_results = len(results['organic'])
+    
+    result_links = []
+    result_titles = []
+    result_snippets = []
+
+    for r in results['organic']:
+        result_links.append(r['link'])
+        result_titles.append(r['title'])
+        result_snippets.append(r['snippet'])
+    
+    return (num_of_results, result_links, result_titles, result_snippets)
+
+def Search_and_Update(source, keyword, file_path):
     # Google search results
     if source == "aastocks":
         str_url = "http://www.aastocks.com/tc/stocks/news/aafn/analysts-views"
