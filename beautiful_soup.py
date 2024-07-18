@@ -30,18 +30,15 @@ def extract_author(source, url):
         if title_element:
             if source == "aastocks":
                 author = title_element.text.split("：")[0]
-                # return author
                 return clean_string(author)
             elif source == "hk01":
                 author = title_element.text.split("｜")[-1]
-                # return author
                 return clean_string(author)
         else:
             return "not found"
     elif source == "etnet":
         div_element = soup.find('div', style="font-size:40px; display: flex;align-items: flex-end; padding-bottom:10px;")
         if div_element:
-            # return div_element.text 
             return clean_string(div_element.text) 
         else:
             return "not found"
@@ -103,8 +100,7 @@ def extract_article(source, url):
                 for p in p_elements:
                     p_combined += p.text
                     
-                # p_combined = str_addl + p_combined + "。網址：" + url
-                p_combined = clean_string(str_addl + p_combined) + "。網址：" + url
+                p_combined = str_addl + p_combined + "。網址：" + url
                 return p_combined            
         else:
             return "not found"
@@ -112,8 +108,7 @@ def extract_article(source, url):
     elif source == "etnet":
         article_paragraph = soup.find('p', itemprop='articleBody')
         if article_paragraph:
-            # return str_addl + article_paragraph.text.strip() + "。網址：" + url 
-            return clean_string(str_addl + article_paragraph.text.strip() + "。網址：" + url)
+            return str_addl + article_paragraph.text.strip() + "。網址：" + url
         else:
             return "not found"  
     
@@ -129,22 +124,21 @@ def extract_stocks(article, filename="hk_stocks.json"):
         
         # find in article matches for stock codes and stock names
         for stock in stock_data:
-            if stock["Code"] in article:
-                stock_codes.append(stock["Code"])
-            if stock["Stock"] in article:
-                stock_names.append(stock["Stock"])
+            if stock["Stock_Code"] in article:
+                stock_codes.append(stock["Stock_Code"])
+            if stock["Stock_Name"] in article:
+                stock_names.append(stock["Stock_Name"])
         
         # add stock codes based on stock names found (if not included already)
         for stock_name in stock_names:
             for stock in stock_data:
                 # find the stock code for each stock name found in article
-                if stock["Stock"] == stock_name:                    
-                    stock_code_match = stock["Code"]
+                if stock["Stock_Name"] == stock_name:                    
+                    stock_code_match = stock["Stock_Code"]
                     # add to stock code list if not duplicate
                     if stock_code_match not in stock_codes:
                         stock_codes.append(stock_code_match)
-               
-    # return found_stock_codes, stock_names
+                        
     return stock_codes
 
 
