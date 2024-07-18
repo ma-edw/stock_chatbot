@@ -163,3 +163,4 @@ cython_debug/
 chainlit-class.json
 .chainlit/
 chainlit.md
+*Zone.identifier
