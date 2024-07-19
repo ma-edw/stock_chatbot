@@ -14,7 +14,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 
 import chainlit as cl
 import os
-# import json
+import json
 from langchain_community.document_loaders import JSONLoader
 from pathlib import Path
 
@@ -28,6 +28,18 @@ def current_date(_):
     td = datetime.date.today()
     td_str = str(td.strftime("%d %B %Y"))
     return td_str
+
+def get_stock_codes(filename="hk_stocks.json"):
+    try:
+        with open(filename, "r", encoding="utf-8") as file:
+            stock_data = json.load(file)
+            stock_codes = []
+            for stock in stock_data:
+                stock_codes.append(stock["Stock_Code"])
+            return stock_codes
+    except:
+        return []
+
 
 model_choice = "Gemini"
 
@@ -83,6 +95,11 @@ async def on_chat_start():
                 Please answer based on the prompt
                 Please answer using only the information from context
                 
+                                   
+                stock codes
+                ---
+                Please search which of the {stock_codes} can be found in the article your answer is based on, and include those stock codes in your answer.
+                
                 current date
                 ---
                 Today's date is {current_date}.
@@ -121,7 +138,7 @@ async def on_chat_start():
         return "\n\n".join(doc.page_content for doc in docs)    
        
     runnable = (
-        {"current_date": RunnableLambda(current_date), "context": retriever | format_docs, "question": RunnablePassthrough()}
+        {"stock_codes": RunnableLambda(get_stock_codes), "current_date": RunnableLambda(current_date), "context": retriever | format_docs, "question": RunnablePassthrough()}
         | prompt
         | model
         | StrOutputParser()
