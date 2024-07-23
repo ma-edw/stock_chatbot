@@ -42,16 +42,12 @@ def get_stock_codes(filename="hk_stocks.json"):
         return []
 
 
-# model_choice = "Gemini"
 model_choice = "Mistral"
-
-# model_choice = "Qwen"
-# model_choice = "Sonnet"
 
 @cl.on_chat_start
 async def on_chat_start():    
 
-    if model_choice == "ChatTogether":
+    if model_choice == "Qwen":
         # Use TogetherAI
         model = ChatTogether(
             api_key=os.environ["KEY_TOGETHERAI"],
