@@ -3,9 +3,11 @@ from beautiful_soup import extract_article, extract_title, extract_author, extra
 import json
 from pathlib import Path
 import os
+import schedule
+import time
 
-from dotenv import load_dotenv
-load_dotenv()  
+# from dotenv import load_dotenv
+# load_dotenv()  
 
 def Serper_Search(to_search):
     search = GoogleSerperAPIWrapper(gl='hk', hl='zh-tw', serper_api_key=os.environ["SERPER_API_KEY"])
@@ -24,7 +26,8 @@ def Serper_Search(to_search):
     
     return (num_of_results, result_links, result_titles, result_snippets)
 
-def Search_and_Update(source, keyword, file_path):
+# search for a keyword, i.e. author in a url source
+def Search_and_Update(source, keyword, file_path="guru_urls.json"):
     # Google search results
     if source == "aastocks":
         str_url = "http://www.aastocks.com/tc/stocks/news/aafn/analysts-views"
@@ -78,3 +81,22 @@ def Search_and_Update(source, keyword, file_path):
 
         with open(file_path, "w", encoding="utf-8") as file:
             json.dump(existing_data,  file, ensure_ascii=False, indent=4)
+            
+def Update_all_data(filename="guru_source.json"):
+    with open(filename, "r", encoding="utf-8") as file:
+        source_data = json.load(file) 
+
+    for data in source_data:
+        source = data["source"]
+        authors = data["authors"]
+        
+        for author in authors:
+            Search_and_Update(source=source, keyword=author)
+
+
+schedule.every(1).day.at("00:00").do(Update_all_data)  # run at 12:00 AM every day
+while True:
+    schedule.run_pending()
+    time.sleep(1)
+
+

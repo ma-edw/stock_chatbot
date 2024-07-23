@@ -21,9 +21,9 @@ from pathlib import Path
 
 import datetime
 
-# from dotenv import load_dotenv
-# load_dotenv()  
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'chainlit-class.json'
+from dotenv import load_dotenv
+load_dotenv()  
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'chainlit-class.json'
 
 def current_date(_):
     td = datetime.date.today()
