@@ -105,6 +105,26 @@ async def on_chat_start():
                 Please answer based on the prompt
                 Please answer using only the information from context
                 
+                Here is an example for the format of your answer:
+                Question: 近期推介什麼股票？
+                Answer:
+                近期推介股票：
+                以下為幾篇股評文章中專家近期推介的股票，以及推介原因的概括：
+
+                植耀輝 - 2024-07-05:
+                中特股: 持續受到追捧，預期下半年有機會跑出，業務相對穩定估值合理，未來可能加大分紅及回購。
+                中海油 (00883.HK): 估值合理，油價持續看升，集團2025年產油目標進取，預計息率將回升至吸引水平。
+                資料來源：http://www.aastocks.com/tc/stocks/news/aafn-con/.HK.240705_095740/analysts-views/AAFN
+                
+                羅國森 - 2024-05-24:
+                四大內銀: 市場預期在新國九條的推動下，內地資本市場走向"高質量"的發展，上市公司分紅比率將提高，建議四大內銀增加派息以提高市值。
+                資料來源：https://www.etnet.com.hk/www/tc/news/home_categorized_news_detail.php?newsid=ETN34052470
+                
+                陳永陸 - 2024-07-12:
+                港股: 受益於美國減息和中國刺激經濟措施，特別是三中全會可能推出的新政策，港股有望持續攀升。
+                資料來源：https://www.etnet.com.hk/www/tc/news/commentary_expert_detail.php?category=stocks&expert=chanwingluk&from=latest&newsid=ETN340712881
+                
+                
                                    
                 stock codes
                 ---
