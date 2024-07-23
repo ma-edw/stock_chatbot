@@ -42,7 +42,11 @@ def get_stock_codes(filename="hk_stocks.json"):
         return []
 
 
-model_choice = "Gemini"
+# model_choice = "Gemini"
+model_choice = "Mistral"
+
+# model_choice = "Qwen"
+# model_choice = "Sonnet"
 
 @cl.on_chat_start
 async def on_chat_start():    
@@ -73,8 +77,8 @@ async def on_chat_start():
             streaming=True
         )
     
-    else:
-        # use Claude 3 - error
+    elif model_choice == "Sonnet":
+        # use Claude 3 - no connection
         model = ChatAnthropicVertex(
             model_name="claude-3-sonnet@20240229",
             project='vtxclass',
