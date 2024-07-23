@@ -1,5 +1,6 @@
 from langchain_google_vertexai.model_garden import ChatAnthropicVertex
 from langchain_google_vertexai import VertexAI
+from langchain_openai import ChatOpenAI
 from langchain_together import ChatTogether
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
@@ -19,10 +20,10 @@ from langchain_community.document_loaders import JSONLoader
 from pathlib import Path
 
 import datetime
-from dotenv import load_dotenv
 
-load_dotenv()  
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'chainlit-class.json'
+# from dotenv import load_dotenv
+# load_dotenv()  
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'chainlit-class.json'
 
 def current_date(_):
     td = datetime.date.today()
@@ -60,6 +61,15 @@ async def on_chat_start():
             model_name="gemini-pro",
             project='vtxclass',
             location='asia-southeast1',
+            streaming=True
+        )
+    
+    elif model_choice == "Mistral":
+        # use Mistral AI
+        model = ChatOpenAI(
+            base_url="https://api.together.xyz/v1",
+            api_key=os.environ["KEY_TOGETHERAI"],
+            model="mistralai/Mixtral-8x7B-Instruct-v0.1",
             streaming=True
         )
     
