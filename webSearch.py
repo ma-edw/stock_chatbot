@@ -94,9 +94,10 @@ def Update_all_data(filename="guru_source.json"):
             Search_and_Update(source=source, keyword=author)
 
 
-schedule.every(1).day.at("00:00").do(Update_all_data)  # run at 12:00 AM every day
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+def scheduled_update():
+    schedule.every(1).day.at("00:00").do(Update_all_data)  # run at 12:00 AM every day
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 
