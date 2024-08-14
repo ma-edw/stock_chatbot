@@ -21,6 +21,8 @@ from pathlib import Path
 
 import datetime
 
+from filepaths import * 
+
 from dotenv import load_dotenv
 load_dotenv()  
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'chainlit-class.json'
@@ -30,7 +32,7 @@ def current_date(_):
     td_str = str(td.strftime("%d %B %Y"))
     return td_str
 
-def get_stock_codes(filename="hk_stocks.json"):
+def get_stock_codes(filename=FILEPATH_STOCK_CODES):
     try:
         with open(filename, "r", encoding="utf-8") as file:
             stock_data = json.load(file)
@@ -70,15 +72,6 @@ async def on_chat_start():
             base_url="https://api.together.xyz/v1",
             api_key=os.environ["KEY_TOGETHERAI"],
             model="mistralai/Mixtral-8x7B-Instruct-v0.1",
-            streaming=True
-        )
-    
-    elif model_choice == "Sonnet":
-        # use Claude 3 - no connection
-        model = ChatAnthropicVertex(
-            model_name="claude-3-sonnet@20240229",
-            project='vtxclass',
-            location='asia-southeast1',
             streaming=True
         )
        
@@ -128,7 +121,7 @@ async def on_chat_start():
                                    
                 stock codes
                 ---
-                Please search which of the {stock_codes} can be found in the article your answer is based on, and include those stock codes in your answer.
+                {stock_codes} contains the stock codes and stock names for your reference.
                 
                 current date
                 ---
@@ -143,9 +136,8 @@ async def on_chat_start():
         ]
     )
     
-    ########################################################################################
     # Document Loader
-    file_path = "guru_urls.json"
+    file_path = FILEPATH_GURU_ARTICLES
 
     loader = JSONLoader(
         file_path=file_path,
@@ -154,7 +146,6 @@ async def on_chat_start():
 
     docs = loader.load()
 
-    ########################################################################################
     # VectorStore
     hfe = HuggingFaceEmbeddings(model_name="BAAI/bge-base-zh-v1.5")
 
@@ -162,7 +153,6 @@ async def on_chat_start():
 
     retriever = vectorstore.as_retriever(search_kwargs={'k': 6})
     
-    ########################################################################################
     # rag chain  
     def format_docs(docs):
         return "\n\n".join(doc.page_content for doc in docs)    

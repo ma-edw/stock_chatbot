@@ -6,8 +6,10 @@ import os
 import schedule
 import time
 
-# from dotenv import load_dotenv
-# load_dotenv()  
+from dotenv import load_dotenv
+load_dotenv()  
+
+from filepaths import *
 
 def Serper_Search(to_search):
     search = GoogleSerperAPIWrapper(gl='hk', hl='zh-tw', serper_api_key=os.environ["SERPER_API_KEY"])
@@ -16,18 +18,13 @@ def Serper_Search(to_search):
     num_of_results = len(results['organic'])
     
     result_links = []
-    result_titles = []
-    result_snippets = []
-
     for r in results['organic']:
         result_links.append(r['link'])
-        result_titles.append(r['title'])
-        result_snippets.append(r['snippet'])
     
-    return (num_of_results, result_links, result_titles, result_snippets)
+    return (num_of_results, result_links)
 
 # search for a keyword, i.e. author in a url source
-def Search_and_Update(source, keyword, file_path="guru_urls.json"):
+def Search_and_Update(source, keyword, file_path=FILEPATH_GURU_ARTICLES):
     # Google search results
     if source == "aastocks":
         str_url = "http://www.aastocks.com/tc/stocks/news/aafn/analysts-views"
@@ -40,12 +37,9 @@ def Search_and_Update(source, keyword, file_path="guru_urls.json"):
         
     str_source = "site: " + str_url
     str_url = keyword + " " + str_source
-    num_of_results, result_links, result_titles, result_snippets = Serper_Search(str_url)
-    
-    # Extract article from the website
-    articles = []    
-    for i in range(num_of_results):
-        articles.append(extract_article(source=source, url=result_links[i]))
+    num_of_results, result_links = Serper_Search(str_url)
+    print(f"No. of search results: {num_of_results}")
+    print()
 
     # Existing data
     existing_data = json.loads(Path(file_path).read_text())
@@ -53,6 +47,8 @@ def Search_and_Update(source, keyword, file_path="guru_urls.json"):
     # Check new data before combining with existing data
     data_to_add = []
     for i in range(num_of_results):
+        print(f"Processing {result_links[i]}")
+        
         date = extract_date(source=source, url=result_links[i])
         author = extract_author(source=source, url=result_links[i])
         title = extract_title(url=result_links[i])
@@ -65,33 +61,77 @@ def Search_and_Update(source, keyword, file_path="guru_urls.json"):
         new_data_invalid = any(x == "not found" for x in [date, author, title, article])
         
         if not (new_data_duplicate or new_data_invalid):
-            new_data = {
+            new_data = {       
+                "source": source,
                 "date": date,
-                "author": author,
+                "author": author,        
                 "title": title,
-                "url": url,
+                "url": url,        
                 "article": article,
-                "stocks": stocks
+                "stocks": stocks,
             }
             data_to_add.append(new_data) 
+            print(f"Article saved: {title}")
+        else:
+            reason_to_reject_article = "duplicate" if new_data_duplicate else "invalid" if new_data_invalid else None
+            print(f"Article not saved: {reason_to_reject_article}")
+        print()
+        
+    print(f"No. of new articles to add: {len(data_to_add)}")
+    print()
     
     # Combine new data (if any) with existing data
     if (len(data_to_add) > 0):
         existing_data.extend(data_to_add)
 
         with open(file_path, "w", encoding="utf-8") as file:
-            json.dump(existing_data,  file, ensure_ascii=False, indent=4)
-            
-def Update_all_data(filename="guru_source.json"):
-    with open(filename, "r", encoding="utf-8") as file:
-        source_data = json.load(file) 
+            json.dump(existing_data,  file, ensure_ascii=False, indent=4)      
 
+def Update_all_data(guru_source_filename=FILEPATH_GURU_SOURCES, articles_filename=FILEPATH_GURU_ARTICLES):
+
+    with open(articles_filename, "r", encoding="utf-8") as file:
+        articles_data = json.load(file)
+    num_of_articles = len(articles_data) 
+    print(f"No. of articles before update: {num_of_articles}")
+    print()
+
+    with open(guru_source_filename, "r", encoding="utf-8") as file:
+        source_data = json.load(file) 
     for data in source_data:
+        
         source = data["source"]
         authors = data["authors"]
         
         for author in authors:
+            print(f"Searching for {author} in {source}")
+            print()
             Search_and_Update(source=source, keyword=author)
+    
+    with open(articles_filename, "r", encoding="utf-8") as file:
+        source_data = json.load(file) 
+        
+    # newly added data
+    new_data = source_data[num_of_articles:]
+        
+    print()       
+    print("Search complete.")
+    print(f"No. of articles after update: {len(source_data)}")
+    print()
+    print("Newly added articles:")
+    print()    
+    for d in new_data:
+        author = d["author"]
+        title = d["title"]
+        url = d["url"]
+        print(f"Author: {author}, Title: {title}")
+        print(f"{url}")
+        print()
+    
+    # Sort the data after addition of new articles
+    sorted_data = sorted(source_data, key=lambda x: (x.get('source', ''), x.get('author', ''), x.get('date', ''))) 
+    
+    with open(articles_filename, "w", encoding="utf-8") as file:
+            json.dump(sorted_data,  file, ensure_ascii=False, indent=4)    
 
 
 def scheduled_update():
@@ -99,5 +139,4 @@ def scheduled_update():
     while True:
         schedule.run_pending()
         time.sleep(1)
-
-
+        
