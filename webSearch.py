@@ -139,4 +139,11 @@ def scheduled_update():
     while True:
         schedule.run_pending()
         time.sleep(1)
-        
+
+
+# Use either options to update the article database
+# Keep running the code to update article database regularly
+# scheduled_update() 
+
+# or manually update article database     
+# Update_all_data()
