@@ -3,8 +3,10 @@ from beautiful_soup import extract_article, extract_title, extract_author, extra
 import json
 from pathlib import Path
 import os
+import shutil
 import schedule
 import time
+from datetime import datetime
 
 from dotenv import load_dotenv
 load_dotenv()  
@@ -87,7 +89,14 @@ def Search_and_Update(source, keyword, file_path=FILEPATH_GURU_ARTICLES):
         with open(file_path, "w", encoding="utf-8") as file:
             json.dump(existing_data,  file, ensure_ascii=False, indent=4)      
 
-def Update_all_data(guru_source_filename=FILEPATH_GURU_SOURCES, articles_filename=FILEPATH_GURU_ARTICLES):
+def Update_all_data(guru_source_filename=FILEPATH_GURU_SOURCES, articles_filename=FILEPATH_GURU_ARTICLES, articles_backup=FOLDER_GURU_ARTICLES_BACKUP):
+    # add date string (last saved) to backup of stock articles file
+    date_str = datetime.now().strftime('%Y-%m-%d') # e.g. 2024-09-16
+    # ensure backup folder exists
+    os.makedirs(articles_backup, exist_ok=True)
+    articles_backup_file = f'{articles_filename[:-5]}_{date_str}.json'
+    articles_backup_dir = os.path.join(articles_backup, articles_backup_file)
+    shutil.copy(articles_filename, articles_backup_dir)
 
     with open(articles_filename, "r", encoding="utf-8") as file:
         articles_data = json.load(file)
