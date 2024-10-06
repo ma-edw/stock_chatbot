@@ -131,7 +131,7 @@ def Update_all_data(guru_source_filename=FILEPATH_GURU_SOURCES, articles_filenam
     sorted_data = sorted(source_data, key=lambda x: (x.get('source', ''), x.get('author', ''), x.get('date', ''))) 
     
     with open(articles_filename, "w", encoding="utf-8") as file:
-            json.dump(sorted_data,  file, ensure_ascii=False, indent=4)    
+        json.dump(sorted_data,  file, ensure_ascii=False, indent=4)    
 
 
 def scheduled_update():
