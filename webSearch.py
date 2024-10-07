@@ -26,17 +26,9 @@ def Serper_Search(to_search):
     return (num_of_results, result_links)
 
 # search for a keyword, i.e. author in a url source
-def Search_and_Update(source, keyword, file_path=FILEPATH_GURU_ARTICLES):
+def Search_and_Update(source, url, keyword, file_path=FILEPATH_GURU_ARTICLES, source_info_path=FILEPATH_GURU_SOURCES):
     # Google search results
-    if source == "aastocks":
-        str_url = "http://www.aastocks.com/tc/stocks/news/aafn/analysts-views"
-    elif source == "etnet":
-        str_url = "https://www.etnet.com.hk/www/tc/news/commentary_category.php?category=stocks"
-    elif source == "hk01":
-        str_url = "https://www.hk01.com/channel/396/%E8%B2%A1%E7%B6%93%E5%BF%AB%E8%A8%8A"
-    else:
-        str_url = ""
-        
+    str_url = url  
     str_source = "site: " + str_url
     str_url = keyword + " " + str_source
     num_of_results, result_links = Serper_Search(str_url)
@@ -90,17 +82,10 @@ def Search_and_Update(source, keyword, file_path=FILEPATH_GURU_ARTICLES):
             json.dump(existing_data,  file, ensure_ascii=False, indent=4)      
 
 def Update_all_data(guru_source_filename=FILEPATH_GURU_SOURCES, articles_filename=FILEPATH_GURU_ARTICLES, articles_backup=FOLDER_GURU_ARTICLES_BACKUP):
-    # add date string (current date) to backup of stock articles file
-    date_str = datetime.now().strftime('%Y-%m-%d') # e.g. 2024-09-16
-    # ensure backup folder exists
-    os.makedirs(articles_backup, exist_ok=True)
-    articles_backup_file = f'{articles_filename[:-5]}_{date_str}.json'
-    articles_backup_dir = os.path.join(articles_backup, articles_backup_file)
-    shutil.copy(articles_filename, articles_backup_dir)
-
     with open(articles_filename, "r", encoding="utf-8") as file:
         articles_data = json.load(file)
     num_of_articles = len(articles_data) 
+    num_of_articles_before = num_of_articles
     print(f"No. of articles before update: {num_of_articles}")
     print()
 
@@ -109,12 +94,13 @@ def Update_all_data(guru_source_filename=FILEPATH_GURU_SOURCES, articles_filenam
     for data in source_data:
         
         source = data["source"]
+        url = data["url"]
         authors = data["authors"]
         
         for author in authors:
             print(f"Searching for {author} in {source}")
             print()
-            Search_and_Update(source=source, keyword=author)
+            Search_and_Update(source=source, url=url, keyword=author)
     
     with open(articles_filename, "r", encoding="utf-8") as file:
         source_data = json.load(file) 
@@ -124,7 +110,9 @@ def Update_all_data(guru_source_filename=FILEPATH_GURU_SOURCES, articles_filenam
         
     print()       
     print("Search complete.")
-    print(f"No. of articles after update: {len(source_data)}")
+    print(f"No. of articles before update: {num_of_articles_before}")
+    print(f"No. of articles after update: {len(source_data)}").
+    print(f"No. of new articles: {len(source_data) - num_of_articles_before}")
     print()
     print("Newly added articles:")
     print()    
@@ -138,9 +126,17 @@ def Update_all_data(guru_source_filename=FILEPATH_GURU_SOURCES, articles_filenam
     
     # Sort the data after addition of new articles
     sorted_data = sorted(source_data, key=lambda x: (x.get('source', ''), x.get('author', ''), x.get('date', ''))) 
-    
+    # Save the file
     with open(articles_filename, "w", encoding="utf-8") as file:
         json.dump(sorted_data,  file, ensure_ascii=False, indent=4)    
+    # Save a backup file for the latest version
+    # add date string (current date) to filename
+    date_str = datetime.now().strftime('%Y-%m-%d') # e.g. 2024-09-16
+    # ensure backup folder exists
+    os.makedirs(articles_backup, exist_ok=True)
+    articles_backup_file = f'{articles_filename[:-5]}_{date_str}.json'
+    articles_backup_dir = os.path.join(articles_backup, articles_backup_file)
+    shutil.copy(articles_filename, articles_backup_dir)
 
 
 def scheduled_update():

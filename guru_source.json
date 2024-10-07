@@ -1,12 +1,12 @@
 [
     {        
         "source": "aastocks",
+        "url": "http://www.aastocks.com/tc/stocks/news/aafn/analysts-views",
         "authors": ["郭思治", "郭家耀", "植耀輝"]
     },
     {
         "source": "etnet",
+        "url": "https://www.etnet.com.hk/www/tc/news/commentary_category.php?category=stocks",
         "authors": ["羅國森", "陳永陸", "黃瑋傑", "郭思治", "林嘉麒", "連敬涵", "黃偉豪"]
     }
 ]
-
-
