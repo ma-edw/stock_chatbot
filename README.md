@@ -33,7 +33,7 @@ Use function Update_all_data() and run the code in webSearch.py to search for ne
 python run webSearch.py
 ```
 
-### Expand data search
+### About the stock article data
 The stock articles are stored in guru_urls.json. 
 <br />
 File guru_source.json defines the data source and stock analysts to search for when updating the data.
