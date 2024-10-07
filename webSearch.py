@@ -90,7 +90,7 @@ def Search_and_Update(source, keyword, file_path=FILEPATH_GURU_ARTICLES):
             json.dump(existing_data,  file, ensure_ascii=False, indent=4)      
 
 def Update_all_data(guru_source_filename=FILEPATH_GURU_SOURCES, articles_filename=FILEPATH_GURU_ARTICLES, articles_backup=FOLDER_GURU_ARTICLES_BACKUP):
-    # add date string (last saved) to backup of stock articles file
+    # add date string (current date) to backup of stock articles file
     date_str = datetime.now().strftime('%Y-%m-%d') # e.g. 2024-09-16
     # ensure backup folder exists
     os.makedirs(articles_backup, exist_ok=True)
