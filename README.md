@@ -30,7 +30,7 @@ In order to get the most updated market information, search for newer stock arti
 <br />
 Use function Update_all_data() and run the code in webSearch.py to search for new stock articles and store for use.
 ```
-python run webSearch.py
+python webSearch.py
 ```
 
 ### About the stock article data
