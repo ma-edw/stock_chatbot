@@ -56,15 +56,6 @@ async def on_chat_start():
             streaming=True,
         )
     
-    elif model_choice == "Gemini":
-        # use Gemini-Pro
-        model = VertexAI(
-            model_name="gemini-pro",
-            project='vtxclass',
-            location='asia-southeast1',
-            streaming=True
-        )
-    
     elif model_choice == "Mistral":
         # use Mistral AI
         model = ChatOpenAI(
