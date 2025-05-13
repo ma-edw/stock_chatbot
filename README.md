@@ -25,6 +25,14 @@ chainlit run app.py
 ```
 The chatbot will be available in http://localhost:8000/
 
+![chat image](images/chat_image_1.jpg)
+</br>
+</br>
+</br>
+![chat image](images/chat_image_2.jpg)
+</br>
+</br>
+
 ### Update the data
 In order to get the most updated market information, search for newer stock articles is needed.
 <br />
@@ -38,3 +46,5 @@ The stock articles are stored in guru_urls.json.
 <br />
 File guru_source.json defines the data source and stock analysts to search for when updating the data.
 <br />
+
+
