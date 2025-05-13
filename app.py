@@ -25,7 +25,6 @@ from filepaths import *
 
 from dotenv import load_dotenv
 load_dotenv()  
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'chainlit-class.json'
 
 def current_date(_):
     td = datetime.date.today()
