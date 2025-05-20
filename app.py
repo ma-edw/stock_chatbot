@@ -42,28 +42,15 @@ def get_stock_codes(filename=FILEPATH_STOCK_CODES):
     except:
         return []
 
-
-model_choice = "Mistral"
-
 @cl.on_chat_start
-async def on_chat_start():    
+async def on_chat_start(): 
 
-    if model_choice == "Qwen":
-        # Use TogetherAI
-        model = ChatTogether(
-            api_key=os.environ["KEY_TOGETHERAI"],
-            model="Qwen/Qwen1.5-72B-Chat",
-            streaming=True,
-        )
-    
-    elif model_choice == "Mistral":
-        # use Mistral AI
-        model = ChatOpenAI(
-            base_url="https://api.together.xyz/v1",
-            api_key=os.environ["KEY_TOGETHERAI"],
-            model="mistralai/Mixtral-8x7B-Instruct-v0.1",
-            streaming=True
-        )
+    model = ChatOpenAI(
+        base_url="https://api.together.xyz/v1",
+        api_key=os.environ["KEY_TOGETHERAI"],
+        model="mistralai/Mixtral-8x7B-Instruct-v0.1",
+        streaming=True
+    )
        
     prompt = ChatPromptTemplate.from_messages(
         [
