@@ -23,7 +23,7 @@ pip install -r requirements.txt
 ```
 
 ### Update the variables in .env file
-Update variable KEY_TOGETHERAI (you need a TogetherAI account) for the Chatbot to run.
+Update variable KEY_TOGETHERAI (you need a Together AI account) for the Chatbot to run.
 </br>
 Update variable SERPER_API_KEY (you need a Serper account) for the Chatbot to be able to do web search for new stock articles.
 
